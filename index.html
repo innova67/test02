@@ -34,45 +34,24 @@
         var fecha = document.getElementById("fecha").value;
         var codigoQR = document.getElementById("codigoQR").value;
         
-        // Crear el objeto de datos
-        var data = {
-            Nombre: nombre,
-            "Modelo de telefono": modelo,
-            "Numero de identificacion": identificacion,
-            Fecha: fecha,
-            "Codigo QR": codigoQR
-        };
-        
-        // Agregar los datos a una nueva fila en el archivo excel
-        XlsxPopulate.fromBlankAsync()
-            .then(workbook => {
-            const sheet = workbook.sheet("Sheet1");
-            
-            sheet.cell("A1").value(["Nombre", "Modelo de telefono", "Numero de identificacion", "Fecha", "Codigo QR"]);
-            sheet.cell("A2").value(Object.values(data));
-            return workbook.outputAsync();
-            })
-            .then(data => {
-            // Convertir el archivo excel a pdf
-            const pdfData = pdfMake.createPdf({
-                content: [{
-                // Usar el mismo nombre de archivo pero cambiar la extensión a pdf
-                filename: "datos.pdf",
-                // Usar los datos generados en el archivo excel para crear la tabla
-                content: [{
-                    table: {
-                    headerRows: 1,
-                    widths: ['*', '*', '*', '*', '*'],
-                    body: [
-                        ["Nombre", "Modelo de telefono", "Numero de identificacion", "Fecha", "Codigo QR"],
-                        [data[0].Nombre, data[0]["Modelo de telefono"], data[0]["Numero de identificacion"], data[0].Fecha, data[0]["Codigo QR"]]
-                    ]
-                    }
-                }]
-                }]
-            }).download();
-            })
-            .catch(error => console.error(error));
+        // Crear objeto con datos a guardar
+        const data = { nombre, modelo, identificacion, fecha, codigoQR };
+
+        // Obtener libro de trabajo actual
+        const workbook = XlsxPopulate.fromBlankAsync().then(workbook => {
+
+        // Agregar nueva hoja al libro de trabajo
+        const sheet = workbook.addSheet("Datos");
+
+        // Agregar datos a la hoja
+        sheet.cell("A1").value(["Nombre", "Modelo", "Identificación", "Fecha", "Código QR"]);
+        sheet.cell("A2").value(Object.values(data));
+
+        // Descargar archivo
+        return workbook.toBlobAsync("application/pdf");
+        }).then(blob => {
+        saveAs(blob, "informacion.pdf");
+        });
         }
     </script>
   </body>
