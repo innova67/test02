@@ -48,6 +48,10 @@
                 sheet.cell("A1").value([Object.keys(data)]);
                 sheet.cell("A2").value([Object.values(data)]);
 
+                // Aplicar formato y colores a la hoja
+                sheet.row(1).style("fontColor", "white").style("fill", "gray").style("bold", true);
+                sheet.row(2).style("fill", "lightgray");
+
                 // Generar PDF con el blob llenado
                 workbook.outputAsync().then(function (blob) {
                     // Crear un objeto URL para el Blob
@@ -74,7 +78,7 @@
                 var pdf = new jsPDF();
                 pdf.setFontSize(16);
                 pdf.text("Información del formulario:", 10, 10);
-                pdf.autoTable({ head: [["Nombre", "Modelo", "Identificación", "Fecha", "Código QR"]], body: [Object.values(data)] });
+                pdf.autoTable({ head: [Object.keys(data)], body: [Object.values(data)] });
 
                 // Descargar archivo PDF
                 pdf.save("informacion.pdf");
