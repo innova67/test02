@@ -22,8 +22,6 @@
       <input type="text" id="codigoQR" name="codigoQR"><br><br>
       <button type="button" onclick="guardarInformacion()">Guardar datos</button>
     </form>
-    <div id="descargar"></div>
-    <button type="button" onclick="descargarPdf()">Descargar PDF</button>
 
     <script type="text/javascript">
         window.jsPDF = window.jspdf.jsPDF;
@@ -34,53 +32,57 @@
         doc.save("a4.pdf");
 
         function guardarInformacion() {
-        // Obtener los datos del formulario
-        var nombre = document.getElementById("nombre").value;
-        var modelo = document.getElementById("modelo").value;
-        var identificacion = document.getElementById("identificacion").value;
-        var fecha = document.getElementById("fecha").value;
-        var codigoQR = document.getElementById("codigoQR").value;
-        
-        // Crear objeto con datos a guardar
-        const data = { nombre, modelo, identificacion, fecha, codigoQR };
+            // Obtener los datos del formulario
+            var nombre = document.getElementById("nombre").value;
+            var modelo = document.getElementById("modelo").value;
+            var identificacion = document.getElementById("identificacion").value;
+            var fecha = document.getElementById("fecha").value;
+            var codigoQR = document.getElementById("codigoQR").value;
+            
+            // Crear objeto con datos a guardar
+            const data = { nombre, modelo, identificacion, fecha, codigoQR };
 
-        // Obtener libro de trabajo actual
-        const workbook = XlsxPopulate.fromBlankAsync().then(workbook => {
+            // Obtener libro de trabajo actual
+            const workbook = XlsxPopulate.fromBlankAsync().then(workbook => {
 
-        // Usar la primer hoja del libro de trabajo
-        const sheet = workbook.sheet(0);
+                // Usar la primer hoja del libro de trabajo
+                const sheet = workbook.sheet(0);
 
-        // Agregar datos a la hoja
-        sheet.cell("A1").value([Object.keys(data)]);
-        sheet.cell("A2").value([Object.values(data)]);
+                // Agregar datos a la hoja
+                sheet.cell("A1").value([Object.keys(data)]);
+                sheet.cell("A2").value([Object.values(data)]);
 
-        // Descargar archivo y generar PDF
-        workbook.outputAsync().then(function (blob) {
-            // Crear un objeto URL para el Blob
-            var url = URL.createObjectURL(blob);
+                // Generar PDF con el blob llenado
+                workbook.outputAsync().then(function (blob) {
+                    // Crear un objeto URL para el Blob
+                    var url = URL.createObjectURL(blob);
 
-            // Crear un objeto FileReader para leer el Blob como ArrayBuffer
-            var reader = new FileReader();
-            reader.readAsArrayBuffer(blob);
+                    // Crear un objeto FileReader para leer el Blob como ArrayBuffer
+                    var reader = new FileReader();
+                    reader.readAsArrayBuffer(blob);
 
-            // Cuando el FileReader termine de leer el Blob, generar PDF y descargar
-            reader.onloadend = function () {
-            var buffer = reader.result;
+                    // Cuando el FileReader termine de leer el Blob, generar archivo Excel y descargar
+                    reader.onloadend = function () {
+                        // Descargar archivo Excel
+                        var excelLink = document.createElement("a");
+                        excelLink.href = url;
+                        excelLink.download = "informacion.xlsx";
+                        excelLink.click();
+                        
+                        // Liberar el objeto URL
+                        URL.revokeObjectURL(url);
+                    };
+                });
 
-            // Generar PDF con jsPDF
-            var pdf = new jsPDF();
-            pdf.setFontSize(16);
-            pdf.text("Información del formulario:", 10, 10);
-            pdf.autoTable({ head: [["Nombre", "Modelo", "Identificación", "Fecha", "Código QR"]], body: [Object.values(data)] });
+                // Generar archivo PDF
+                var pdf = new jsPDF();
+                pdf.setFontSize(16);
+                pdf.text("Información del formulario:", 10, 10);
+                pdf.autoTable({ head: [["Nombre", "Modelo", "Identificación", "Fecha", "Código QR"]], body: [Object.values(data)] });
 
-            // Descargar PDF
-            pdf.save("informacion.pdf");
-
-            // Liberar el objeto URL
-            URL.revokeObjectURL(url);
-            };
-        });
-        })
+                // Descargar archivo PDF
+                pdf.save("informacion.pdf");
+            });
         }
     </script>
   </body>
