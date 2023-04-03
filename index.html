@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Formulario de registro</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx-populate/1.21.0/xlsx-populate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/vfs_fonts.js"></script>
+    <script src="guardar_datos.js"></script>
+  </head>
+  <body>
+    <h1>Formulario de registro</h1>
+    <form>
+      <label for="nombre">Nombre:</label><br>
+      <input type="text" id="nombre" name="nombre"><br>
+      <label for="modelo">Modelo de teléfono:</label><br>
+      <input type="text" id="modelo" name="modelo"><br>
+      <label for="identificacion">Número de identificación:</label><br>
+      <input type="text" id="identificacion" name="identificacion"><br>
+      <label for="fecha">Fecha:</label><br>
+      <input type="date" id="fecha" name="fecha"><br>
+      <label for="codigoQR">Código QR:</label><br>
+      <input type="text" id="codigoQR" name="codigoQR"><br><br>
+      <button type="button" onclick="guardarInformacion()">Guardar datos</button>
+    </form>
+    <div id="descargar"></div>
+
+    <script type="text/javascript">
+        function guardarInformacion() {
+        // Obtener los datos del formulario
+        var nombre = document.getElementById("nombre").value;
+        var modelo = document.getElementById("modelo").value;
+        var identificacion = document.getElementById("identificacion").value;
+        var fecha = document.getElementById("fecha").value;
+        var codigoQR = document.getElementById("codigoQR").value;
+        
+        // Crear el objeto de datos
+        var data = {
+            Nombre: nombre,
+            "Modelo de telefono": modelo,
+            "Numero de identificacion": identificacion,
+            Fecha: fecha,
+            "Codigo QR": codigoQR
+        };
+        
+        // Agregar los datos a una nueva fila en el archivo excel
+        XlsxPopulate.fromBlankAsync()
+            .then(workbook => {
+            const sheet = workbook.sheet("Sheet1");
+            sheet.cell("A1").value(["Nombre", "Modelo de telefono", "Numero de identificacion", "Fecha", "Codigo QR"]);
+            const rowValues = [data.Nombre, data["Modelo de telefono"], data["Numero de identificacion"], data.Fecha, data["Codigo QR"]];
+            sheet.addRow(rowValues);
+            return workbook.outputAsync();
+            })
+            .then(data => {
+            // Convertir el archivo excel a pdf
+            const pdfData = pdfMake.createPdf({
+                content: [{
+                // Usar el mismo nombre de archivo pero cambiar la extensión a pdf
+                filename: "datos.pdf",
+                // Usar los datos generados en el archivo excel para crear la tabla
+                content: [{
+                    table: {
+                    headerRows: 1,
+                    widths: ['*', '*', '*', '*', '*'],
+                    body: [
+                        ["Nombre", "Modelo de telefono", "Numero de identificacion", "Fecha", "Codigo QR"],
+                        [data[0].Nombre, data[0]["Modelo de telefono"], data[0]["Numero de identificacion"], data[0].Fecha, data[0]["Codigo QR"]]
+                    ]
+                    }
+                }]
+                }]
+            }).download();
+            })
+            .catch(error => console.error(error));
+        }
+    </script>
+  </body>
+</html>
