@@ -40,12 +40,12 @@
         // Obtener libro de trabajo actual
         const workbook = XlsxPopulate.fromBlankAsync().then(workbook => {
 
-        // Agregar nueva hoja al libro de trabajo
-        const sheet = workbook.addSheet("Datos");
+        // Usar la primer hoja del libro de trabajo
+        const sheet = workbook.sheet(0);
 
         // Agregar datos a la hoja
         sheet.cell("A1").value(["Nombre", "Modelo", "Identificación", "Fecha", "Código QR"]);
-        sheet.cell("A2").value(Object.values(data));
+        //sheet.cell("A2").value(Object.values(data));
 
         console.log(Object.values(data));
 
