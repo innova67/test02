@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Formulario de registro</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx-populate/1.21.0/xlsx-populate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   </head>
   <body>
     <h1>Formulario de registro</h1>
@@ -25,6 +25,14 @@
     <button type="button" onclick="descargarPdf()">Descargar PDF</button>
 
     <script type="text/javascript">
+        import { jsPDF } from "jspdf";
+
+        // Default export is a4 paper, portrait, using millimeters for units
+        const doc = new jsPDF();
+
+        doc.text("Hello world!", 10, 10);
+        doc.save("a4.pdf");
+
         function guardarInformacion() {
         // Obtener los datos del formulario
         var nombre = document.getElementById("nombre").value;
