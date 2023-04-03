@@ -49,9 +49,7 @@
         // Descargar archivo
         return workbook.outputAsync()
             .then(workbook => {
-            const sheet = workbook.sheet(0);
-            const range = sheet.usedRange();
-            const rangeValues = range.value();
+            const rangeValues = workbook.sheet(0).usedRange().value();
             const pdfDocument = new jsPDF();
 
             pdfDocument.autoTable({
