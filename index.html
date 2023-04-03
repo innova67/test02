@@ -47,9 +47,9 @@
         XlsxPopulate.fromBlankAsync()
             .then(workbook => {
             const sheet = workbook.sheet("Sheet1");
+            
             sheet.cell("A1").value(["Nombre", "Modelo de telefono", "Numero de identificacion", "Fecha", "Codigo QR"]);
-            const rowValues = [data.Nombre, data["Modelo de telefono"], data["Numero de identificacion"], data.Fecha, data["Codigo QR"]];
-            sheet.addRow(rowValues);
+            sheet.cell("A2").value(Object.values(data));
             return workbook.outputAsync();
             })
             .then(data => {
