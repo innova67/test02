@@ -24,12 +24,8 @@
     </form>
 
     <script type="text/javascript">
+        // declarar jsPDF de manera global porque no se reconoce de manera interna
         window.jsPDF = window.jspdf.jsPDF;
-        // Default export is a4 paper, portrait, using millimeters for units
-        const doc = new jsPDF();
-
-        doc.text("Hello world!", 10, 10);
-        doc.save("a4.pdf");
 
         function guardarInformacion() {
             // Obtener los datos del formulario
