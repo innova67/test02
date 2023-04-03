@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <title>Formulario de registro</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx-populate/1.21.0/xlsx-populate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/vfs_fonts.js"></script>
-    <!-- <script src="guardar_datos.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
   </head>
   <body>
     <h1>Formulario de registro</h1>
@@ -24,6 +22,7 @@
       <button type="button" onclick="guardarInformacion()">Guardar datos</button>
     </form>
     <div id="descargar"></div>
+    <button type="button" onclick="descargarPdf()">Descargar PDF</button>
 
     <script type="text/javascript">
         function guardarInformacion() {
@@ -47,9 +46,6 @@
         sheet.cell("A1").value([["Nombre", "Modelo", "Identificación", "Fecha", "Código QR"]]);
         sheet.cell("A2").value([Object.values(data)]);
 
-        console.log(Object.keys(data));
-        console.log(Object.values(data));
-
         // Descargar archivo
         return workbook.outputAsync()
             .then(function (blob) {
@@ -66,6 +62,24 @@
             URL.revokeObjectURL(url);
             });
         })
+        }
+
+        function descargarPdf() {
+        const workbook = XlsxPopulate.fromFileAsync('informacion.xlsx')
+            .then(workbook => {
+            const sheet = workbook.sheet(0);
+            const range = sheet.usedRange();
+            const rangeValues = range.value();
+            const pdfDocument = new jsPDF();
+
+            pdfDocument.autoTable({
+                head: [rangeValues[0]],
+                body: rangeValues.slice(1),
+            });
+
+            pdfDocument.save('informacion.pdf');
+            })
+            .catch(error => console.log(error));
         }
     </script>
   </body>
