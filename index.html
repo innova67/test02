@@ -48,10 +48,21 @@
         sheet.cell("A2").value(Object.values(data));
 
         // Descargar archivo
-        return workbook.toBlobAsync("application/pdf");
-        }).then(blob => {
-        saveAs(blob, "informacion.pdf");
-        });
+        return workbook.outputAsync()
+            .then(function (blob) {
+            // Crear un objeto URL para el Blob
+            var url = URL.createObjectURL(blob);
+
+            // Crear un enlace para descargar el archivo
+            var a = document.createElement("a");
+            a.href = url;
+            a.download = "informacion.xlsx";
+            a.click();
+
+            // Liberar el objeto URL
+            URL.revokeObjectURL(url);
+            });
+        })
         }
     </script>
   </body>
