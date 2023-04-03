@@ -47,6 +47,8 @@
         sheet.cell("A1").value(["Nombre", "Modelo", "Identificación", "Fecha", "Código QR"]);
         sheet.cell("A2").value(Object.values(data));
 
+        console.log(Object.values(data));
+
         // Descargar archivo
         return workbook.outputAsync()
             .then(function (blob) {
