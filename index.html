@@ -43,29 +43,11 @@
         const sheet = workbook.sheet(0);
 
         // Agregar datos a la hoja
-        sheet.cell("A1").value([["Nombre", "Modelo", "Identificación", "Fecha", "Código QR"]]);
+        sheet.cell("A1").value([Object.keys(data)]);
         sheet.cell("A2").value([Object.values(data)]);
 
         // Descargar archivo
         return workbook.outputAsync()
-            .then(function (blob) {
-            // Crear un objeto URL para el Blob
-            var url = URL.createObjectURL(blob);
-
-            // Crear un enlace para descargar el archivo
-            var a = document.createElement("a");
-            a.href = url;
-            a.download = "informacion.xlsx";
-            a.click();
-
-            // Liberar el objeto URL
-            URL.revokeObjectURL(url);
-            });
-        })
-        }
-
-        function descargarPdf() {
-        const workbook = XlsxPopulate.fromFileAsync('informacion.xlsx')
             .then(workbook => {
             const sheet = workbook.sheet(0);
             const range = sheet.usedRange();
@@ -80,6 +62,7 @@
             pdfDocument.save('informacion.pdf');
             })
             .catch(error => console.log(error));
+        })
         }
     </script>
   </body>
