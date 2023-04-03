@@ -44,8 +44,8 @@
         const sheet = workbook.sheet(0);
 
         // Agregar datos a la hoja
-        sheet.cell("A1").value(["Nombre", "Modelo", "Identificación", "Fecha", "Código QR"]);
-        //sheet.cell("A2").value(Object.values(data));
+        sheet.cell("A1").value([["Nombre", "Modelo", "Identificación", "Fecha", "Código QR"]]);
+        //sheet.cell("A2").value([Object.values(data)]);
 
         console.log(Object.keys(data));
         console.log(Object.values(data));
