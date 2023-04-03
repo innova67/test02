@@ -46,20 +46,32 @@
         sheet.cell("A1").value([Object.keys(data)]);
         sheet.cell("A2").value([Object.values(data)]);
 
-        // Descargar archivo
-        return workbook.outputAsync()
-            .then(workbook => {
-            const rangeValues = workbook.sheet(0).usedRange().value();
-            const pdfDocument = new jsPDF();
+        // Descargar archivo y generar PDF
+        workbook.outputAsync().then(function (blob) {
+            // Crear un objeto URL para el Blob
+            var url = URL.createObjectURL(blob);
 
-            pdfDocument.autoTable({
-                head: [rangeValues[0]],
-                body: rangeValues.slice(1),
-            });
+            // Crear un objeto FileReader para leer el Blob como ArrayBuffer
+            var reader = new FileReader();
+            reader.readAsArrayBuffer(blob);
 
-            pdfDocument.save('informacion.pdf');
-            })
-            .catch(error => console.log(error));
+            // Cuando el FileReader termine de leer el Blob, generar PDF y descargar
+            reader.onloadend = function () {
+            var buffer = reader.result;
+
+            // Generar PDF con jsPDF
+            var pdf = new jsPDF();
+            pdf.setFontSize(16);
+            pdf.text("Información del formulario:", 10, 10);
+            pdf.autoTable({ head: [["Nombre", "Modelo", "Identificación", "Fecha", "Código QR"]], body: [Object.values(data)] });
+
+            // Descargar PDF
+            pdf.save("informacion.pdf");
+
+            // Liberar el objeto URL
+            URL.revokeObjectURL(url);
+            };
+        });
         })
         }
     </script>
